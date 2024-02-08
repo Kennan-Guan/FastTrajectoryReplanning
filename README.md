@@ -1,1 +1,1 @@
-# fast_trajectory_replanning
+# FastTrajectoryReplanning
