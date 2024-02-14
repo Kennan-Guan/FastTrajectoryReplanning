@@ -64,8 +64,8 @@ public class Node{
     }
 
     public int compareTo(Node other){
-        if (this.fVal) == other.fVal {
-            reutrn this.gVal - other.gVal;
+        if (this.fVal == other.fVal) {
+            return this.gVal - other.gVal;
         }
         return this.fVal - other.fVal;
     }
