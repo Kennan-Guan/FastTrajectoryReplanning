@@ -29,7 +29,7 @@ public class Node{
     // Get f, g, h values 
 
     public int getFVal(){
-        return this.fVal;
+        return this.gVal + this.hVal;
     }
 
     public int getGVal(){
@@ -45,12 +45,6 @@ public class Node{
     public void setGVal(int newGVal){
         this.gVal = newGVal;
         this.fVal = this.gVal + this.hVal;
-    }
-
-    // Get h value for current node
-
-    public int calcHVal(){
-        return (50 - this.row) + (50 - this.col);
     }
 
     // Check visited

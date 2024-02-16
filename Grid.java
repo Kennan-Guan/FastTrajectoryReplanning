@@ -1,26 +1,25 @@
 public class Grid{
     Node[][] grid;
-    int size;
     Node start, goal;
     
+    public static final int SIZE = 50;
     public static final double OBSTACLE_PERCENTAGE = 0.20;
 
-    //Creates an n x n empty grid of nodes with starting node at (start_row, start_col)
+    //Creates an 50 x 50 empty grid of nodes with starting node at (start_row, start_col)
     //and goal node at (goal_row, goal_col) with indices starting at 0
-    public Grid(int n, int start_row, int start_col, int goal_row, int goal_col) {
-        size = n;
+    public Grid(int start_row, int start_col, int goal_row, int goal_col) {
         grid = new Node[size][size];
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++){
                 if (i == start_row && j == start_col) {
-                    start = new Node(i, j, i+j, false);
+                    start = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
                     grid[i][j] = start;
                 } else if (i  == goal_row && j == goal_col) {
-                    goal = new Node(i, j, i+j, false);
+                    goal = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
                     grid[i][j] = goal;
                 } else {
-                    grid[i][j] = new Node(i, j, i+j, setObstacle());
+                    grid[i][j] = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), setObstacle());
                 }
             }
         }
