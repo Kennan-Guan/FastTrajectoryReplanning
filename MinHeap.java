@@ -105,20 +105,9 @@ class MinHeap {
         MinHeapify(0); 
   
         return root; 
-    } 
-          
-    // This function deletes key at the  
-    // given index. It first reduced value  
-    // to minus infinite, then calls extractMin() 
-    public void deleteKey(int key) { 
-        decreaseKey(key, null); 
-        extractMin(); 
-    } 
+    }
       
-    // A recursive method to heapify a subtree  
-    // with the root at given index  
-    // This method assumes that the subtrees 
-    // are already heapified 
+    //Breaks ties in favor or lower G values, otherwise picks lowest F value
     private void MinHeapify(int key) { 
         int l = left(key); 
         int r = right(key); 
@@ -130,6 +119,13 @@ class MinHeap {
         if (r < current_heap_size && heapArray[r].getFVal() < heapArray[smallest].getFVal()) { 
             smallest = r;
         } 
+        if (l < current_heap_size && heapArray[l].getFVal() == heapArray[smallest].getFVal() && heapArray[l].getGVal() < heapArray[smallest].getGVal()) {
+                smallest = l;
+        }
+        if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal() && heapArray[r].getGVal() < heapArray[smallest].getGVal()) {
+            smallest = r;
+    }
+        
   
         if (smallest != key) { 
             swap(heapArray, key, smallest); 
@@ -163,7 +159,7 @@ class MinHeap {
     //Returns the index of the desired node, otherwise returns -1
     public int findIndex(Node node) {
         for (int i = 0; i < heapArray.length; i++) {
-            if (heapArray[i].equals(node)) {
+            if (heapArray[i] != null && heapArray[i].equals(node)) {
                 return i;
             }
         }

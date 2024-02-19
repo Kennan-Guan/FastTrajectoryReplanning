@@ -14,17 +14,20 @@ public class Grid{
             for (int j = 0; j < SIZE; j++){
                 if (i == start_row && j == start_col) {
                     start = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
+                    start.setParent(start);
                     grid[i][j] = start;
                 } else if (i  == goal_row && j == goal_col) {
                     goal = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
+                    goal.setGVal(Integer.MAX_VALUE);
                     grid[i][j] = goal;
                 } else {
                     grid[i][j] = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), setObstacle());
                 }
             }
         }
-
+        System.out.println("Original Grid:");
         printGrid();
+        System.out.println();
     }
 
     //Randomly determines if an obstacle should be present or not
@@ -41,6 +44,8 @@ public class Grid{
                     System.out.print("[A]");
                 } else if (grid[i][j] == goal) {
                     System.out.print("[G]");
+                } else if (grid[i][j].path) {
+                    System.out.print("[*]");
                 } else {
                     System.out.print("[ ]");
                 }
