@@ -3,16 +3,18 @@ import java.util.Stack;
 
 //Implements Repeated Forward A* with ties being broken in favor of smaller g-values
 public class AStarSmall {
-    ArrayList<Node> openList;
+    MinHeap openList;
     ArrayList<Node> closedList;
     Stack<Node> foundPath;
     boolean isFound;
     Node currentNode;
     int numExpansions;
+    Grid grid;
 
 
     public AStarSmall(Grid grid) {
-        openList = new ArrayList<Node>();
+        this.grid = grid;
+        openList = new MinHeap(grid.SIZE);
         closedList = new ArrayList<Node>();
 
         currentNode = grid.start;
@@ -22,10 +24,10 @@ public class AStarSmall {
         while (currentNode != grid.goal) {
             numExpansions++;
 
-            openList.add(currentNode);
+            openList.insertKey(currentNode);
             computePath();
 
-            if (openList.size() == 0) {
+            if (openList.getHeapSize() == 0) {
                 break;
             }
 
@@ -35,49 +37,47 @@ public class AStarSmall {
     }
 
     public void computePath() {
-        while (grid.goal.getGVal > minFValueNode.getFVal) {
-            openList.remove(minFValueNode);
-            closedList.add(minFValueNode);
+        while (grid.goal.getGVal() > openList.getMin().getFVal()) {
+            closedList.add(openList.getMin());
+            findNextStep(openList.getMin());
 
-            findNextStep();
+            openList.deleteKey(0);
+            currentNode = openList.getMin();
 
-            //SORT OPEN LIST HERE
-            currentNode = openList.get(0);
-
-            foundPath.push(currentNode)
+            foundPath.push(currentNode);
 
         }
 
     }
 
-    public void findNextStep(){
-        if (checkDown(minFValueNode)) {
-            Node neighbor = grid[node.row+1][node.col];
+    public void findNextStep(Node node){
+        if (checkDown(node)) {
+            Node neighbor = grid.grid[node.row+1][node.col];
             if(!closedList.contains(neighbor)) {
-                neighbor.setGVal(neighbor.gVal + 1);
+                neighbor.setGVal(node.gVal + 1);
                 openListAdd(neighbor);
             }
         }
-        if (checkUp(minFValueNode)) {
-            Node neighbor = grid[node.row-1][node.col];
+        if (checkUp(node)) {
+            Node neighbor = grid.grid[node.row-1][node.col];
             if(!closedList.contains(neighbor)) {
-                neighbor.setGVal(neighbor.gVal + 1);
-                openListAdd(neighbor);
-            }
-        }
-
-        if (checkRight(minFValueNode)) {
-            Node neighbor = grid[node.row][node.col+1];
-            if(!closedList.contains(neighbor)) {
-                neighbor.setGVal(neighbor.gVal + 1);
+                neighbor.setGVal(currentNode.gVal + 1);
                 openListAdd(neighbor);
             }
         }
 
-        if (checkDown(minFValueNode)) {
-            Node neighbor = grid[node.row][node.col-1];
+        if (checkRight(node)) {
+            Node neighbor = grid.grid[node.row][node.col+1];
             if(!closedList.contains(neighbor)) {
-                neighbor.setGVal(neighbor.gVal + 1);
+                neighbor.setGVal(currentNode.gVal + 1);
+                openListAdd(neighbor);
+            }
+        }
+
+        if (checkDown(node)) {
+            Node neighbor = grid.grid[node.row][node.col-1];
+            if(!closedList.contains(neighbor)) {
+                neighbor.setGVal(currentNode.gVal + 1);
                 openListAdd(neighbor);
             }
         }
@@ -85,35 +85,31 @@ public class AStarSmall {
 
     //Returns true if node is available and unblocked, otherwise false
     public boolean checkDown(Node node) {
-        return (node.row+1 < grid.SIZE && node.col < grid.SIZE) && !grid[node.row+1][node.col].isBlocked;
+        return (node.row+1 < grid.SIZE && node.col < grid.SIZE) && !grid.grid[node.row+1][node.col].isBlocked;
     }
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkUp(Node node) {
-        return (node.row-1 < grid.SIZE && node.col < grid.SIZE) && !grid[node.row-1][node.col].isBlocked;
+        return (node.row-1 < grid.SIZE && node.col < grid.SIZE) && !grid.grid[node.row-1][node.col].isBlocked;
     }
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkRight(Node node) {
-        return (node.row < grid.SIZE && node.col+1 < grid.SIZE) && !grid[node.row][node.col+1].isBlocked;
+        return (node.row < grid.SIZE && node.col+1 < grid.SIZE) && !grid.grid[node.row][node.col+1].isBlocked;
     }
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkLeft(Node node) {
-        return (node.row < grid.SIZE && node.col-1 < grid.SIZE) && !grid[node.row][node.col-1].isBlocked;
+        return (node.row < grid.SIZE && node.col-1 < grid.SIZE) && !grid.grid[node.row][node.col-1].isBlocked;
     }
 
     public void openListAdd(Node node) {
-        if (openList.contains(node) && ) {
-            //if the node that is in the open list has a greater f-value than the current version of that node, swap
+        int existing_node = openList.findIndex(node);
+        if (existing_node > 0) {
+            openList.changeValueOnAKey(existing_node, node);
         } else {
-            //otherwise add current node to the list 
             node.setParent(currentNode);
-            openList.add(node);
+            openList.insertKey(node);
         }
-    }
-
-    public Node minFValueNode() {
-        for ()
     }
 }

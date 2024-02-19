@@ -2,16 +2,16 @@ public class Grid{
     Node[][] grid;
     Node start, goal;
     
-    public static final int SIZE = 50;
-    public static final double OBSTACLE_PERCENTAGE = 0.20;
+    public final int SIZE = 50;
+    public final double OBSTACLE_PERCENTAGE = 0.20;
 
     //Creates an 50 x 50 empty grid of nodes with starting node at (start_row, start_col)
     //and goal node at (goal_row, goal_col) with indices starting at 0
     public Grid(int start_row, int start_col, int goal_row, int goal_col) {
-        grid = new Node[size][size];
+        grid = new Node[SIZE][SIZE];
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++){
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++){
                 if (i == start_row && j == start_col) {
                     start = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
                     grid[i][j] = start;
@@ -33,8 +33,8 @@ public class Grid{
     }
 
     public void printGrid() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
                 if (grid[i][j].isBlocked) {
                     System.out.print("[X]");
                 } else if (grid[i][j] == start) {

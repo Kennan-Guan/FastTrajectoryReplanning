@@ -57,6 +57,10 @@ public class Node{
         return this.visited;
     }
 
+    public boolean equals(Node other) {
+        return (this.col == other.col) && (this.row == other.row); 
+    }
+
     public int compareTo(Node other){
         if (this.fVal == other.fVal) {
             return this.gVal - other.gVal;
