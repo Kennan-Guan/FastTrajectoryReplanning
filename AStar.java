@@ -23,44 +23,34 @@ public class AStar {
 
         numExpansions = 0;
         while (!currentNode.equals(grid.goal)) {
-            openList.insertKey(currentNode);
-            computePath();
+            closedList.add(currentNode);
+            findNextStep(currentNode);
             if (openList.getHeapSize() == 0) {
                 break;
             }
-            while (!currentNode.getParent().equals(currentNode)) {
-                foundPath.push(currentNode);
-                currentNode.path = true;
-                currentNode = currentNode.getParent();    
-            }
-            openList = new MinHeap(grid.SIZE * grid.SIZE);
-            closedList.clear();
-        }
-
-    }
-
-    public void computePath() {
-        while (grid.goal.getGVal() > openList.getMin().getFVal()) {
-            Node state = openList.extractMin();
-            closedList.add(state);
+            currentNode = openList.extractMin();
             numExpansions++;
-            findNextStep(state);
-            currentNode = openList.getMin();
         }
-    }
 
+        while (!currentNode.getParent().equals(currentNode)) {
+            foundPath.push(currentNode);
+            currentNode.path = true;
+            currentNode = currentNode.getParent();    
+        }
+
+    }
 
     public void findNextStep(Node node){
         if (checkDown(node)) {
             Node neighbor = grid.grid[node.row+1][node.col];
-            if(!closedList.contains(neighbor)) {
+            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
                 neighbor.setGVal(node.gVal + 1);
                 openListAdd(neighbor);
             }
         }
         if (checkUp(node)) {
             Node neighbor = grid.grid[node.row-1][node.col];
-            if(!closedList.contains(neighbor)) {
+            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
                 neighbor.setGVal(node.gVal + 1);
                 openListAdd(neighbor);
             }
@@ -68,7 +58,7 @@ public class AStar {
 
         if (checkRight(node)) {
             Node neighbor = grid.grid[node.row][node.col+1];
-            if(!closedList.contains(neighbor)) {
+            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
                 neighbor.setGVal(node.gVal + 1);
                 openListAdd(neighbor);
             }
@@ -76,7 +66,7 @@ public class AStar {
 
         if (checkLeft(node)) {
             Node neighbor = grid.grid[node.row][node.col-1];
-            if(!closedList.contains(neighbor)) {
+            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
                 neighbor.setGVal(node.gVal + 1);
                 openListAdd(neighbor);
             }

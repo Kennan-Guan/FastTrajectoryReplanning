@@ -113,7 +113,6 @@ class MinHeap {
         extractMin(); 
     } 
 
-    //Breaks ties in favor or lower G values, otherwise picks lowest F value
     private void MinHeapify(int key) { 
         int l = left(key); 
         int r = right(key); 
@@ -138,17 +137,7 @@ class MinHeap {
             MinHeapify(smallest); 
         } 
     } 
-      
-    // Increases value of given key to new_val. 
-    // It is assumed that new_val is greater  
-    // than heapArray[key].  
-    // Heapify from the given key 
-    public void increaseKey(int key, Node new_val) { 
-        heapArray[key] = new_val; 
-        MinHeapify(key); 
-    } 
 
-    // Changes value on a key 
     public boolean changeValueOnAKey(int key, Node new_val) { 
         if (heapArray[key].getFVal() <= new_val.getFVal()) { 
             return false; 
