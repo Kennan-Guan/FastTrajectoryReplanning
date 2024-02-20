@@ -2,7 +2,7 @@ public class Grid{
     Node[][] grid;
     Node start, goal;
     
-    public final int SIZE = 5;
+    public final int SIZE = 50;
     public final double OBSTACLE_PERCENTAGE = 0.20;
 
     //Creates an 50 x 50 empty grid of nodes with starting node at (start_row, start_col)
