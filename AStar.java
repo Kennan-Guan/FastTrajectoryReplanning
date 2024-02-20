@@ -12,16 +12,15 @@ public class AStar {
     Grid grid;
 
 
-    public AStar(Grid grid) {
+    public AStar(Grid grid, int tie) {
         this.grid = grid;
-        openList = new MinHeap(grid.SIZE * grid.SIZE);
+        openList = new MinHeap(grid.SIZE * grid.SIZE, tie);
         closedList = new ArrayList<Node>();
         foundPath = new Stack<>();
-
         currentNode = grid.start;
         isFound = false;
-
         numExpansions = 0;
+        
         while (!currentNode.equals(grid.goal)) {
             closedList.add(currentNode);
             findNextStep(currentNode);
