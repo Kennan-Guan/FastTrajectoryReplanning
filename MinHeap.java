@@ -2,7 +2,7 @@
 class MinHeap { 
       
     // To store array of elements in heap 
-    private Node[] heapArray; 
+    public Node[] heapArray; 
       
     // max size of the heap 
     private int capacity; 
@@ -106,7 +106,13 @@ class MinHeap {
   
         return root; 
     }
-      
+    
+    public void deleteKey(int key) { 
+        heapArray[key].setGVal(Integer.MIN_VALUE);
+        decreaseKey(key, heapArray[key]); 
+        extractMin(); 
+    } 
+
     //Breaks ties in favor or lower G values, otherwise picks lowest F value
     private void MinHeapify(int key) { 
         int l = left(key); 
@@ -120,7 +126,7 @@ class MinHeap {
             smallest = r;
         } 
         if (l < current_heap_size && heapArray[l].getFVal() == heapArray[smallest].getFVal() && heapArray[l].getGVal() < heapArray[smallest].getGVal()) {
-                smallest = l;
+            smallest = l;
         }
         if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal() && heapArray[r].getGVal() < heapArray[smallest].getGVal()) {
             smallest = r;
@@ -141,15 +147,11 @@ class MinHeap {
         heapArray[key] = new_val; 
         MinHeapify(key); 
     } 
-      
+
     // Changes value on a key 
     public boolean changeValueOnAKey(int key, Node new_val) { 
-        if (heapArray[key].getFVal() == new_val.getFVal()) { 
+        if (heapArray[key].getFVal() <= new_val.getFVal()) { 
             return false; 
-        } 
-        if (heapArray[key].getFVal() < new_val.getFVal()) { 
-            increaseKey(key, new_val); 
-            return true;
         } else { 
             decreaseKey(key, new_val); 
             return true;

@@ -23,32 +23,32 @@ public class AStar {
 
         numExpansions = 0;
         while (!currentNode.equals(grid.goal)) {
-            numExpansions++;
             openList.insertKey(currentNode);
             computePath();
             if (openList.getHeapSize() == 0) {
                 break;
             }
-        }
-
-        while (!currentNode.getParent().equals(currentNode)) {
-            foundPath.push(currentNode);
-            currentNode.path = true;
-            currentNode = currentNode.getParent();    
+            while (!currentNode.getParent().equals(currentNode)) {
+                foundPath.push(currentNode);
+                currentNode.path = true;
+                currentNode = currentNode.getParent();    
+            }
+            openList = new MinHeap(grid.SIZE * grid.SIZE);
+            closedList.clear();
         }
 
     }
 
     public void computePath() {
         while (grid.goal.getGVal() > openList.getMin().getFVal()) {
-            closedList.add(openList.getMin());
-            findNextStep(openList.getMin());
-            openList.extractMin();
+            Node state = openList.extractMin();
+            closedList.add(state);
+            numExpansions++;
+            findNextStep(state);
             currentNode = openList.getMin();
         }
-
-
     }
+
 
     public void findNextStep(Node node){
         if (checkDown(node)) {
@@ -90,7 +90,7 @@ public class AStar {
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkUp(Node node) {
-        return node.row-1 > 0 && !grid.grid[node.row-1][node.col].isBlocked;
+        return node.row-1 >= 0 && !grid.grid[node.row-1][node.col].isBlocked;
     }
 
         //Returns true if node is available and unblocked, otherwise false
@@ -100,12 +100,12 @@ public class AStar {
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkLeft(Node node) {
-        return node.col-1 > 0 && !grid.grid[node.row][node.col-1].isBlocked;
+        return node.col-1 >= 0 && !grid.grid[node.row][node.col-1].isBlocked;
     }
 
     public void openListAdd(Node node) {
         int existing_node = openList.findIndex(node);
-        if (existing_node > 0) {
+        if (existing_node > -1) {
             openList.changeValueOnAKey(existing_node, node);
         } else {
             node.setParent(currentNode);
