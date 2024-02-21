@@ -1,4 +1,4 @@
- class MinHeap { 
+ public class MinHeap { 
     public Node[] heapArray; 
     private int capacity; 
     private int current_heap_size;
@@ -40,7 +40,8 @@
        
         int i = current_heap_size; 
         heapArray[i] = key; 
-        current_heap_size++; 
+        current_heap_size++;
+        
            
         while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal()) { 
             swap(heapArray, i, parent(i)); 
@@ -140,6 +141,11 @@
             }
         }
         return -1;
+    }
+
+    public void clearHeap() {
+        heapArray = new Node[capacity];
+        current_heap_size = 0;
     }
 } 
   

@@ -1,18 +1,17 @@
 public class Node{
-    public Node parent;
-    public int row, col, fVal, gVal, hVal;
-    public boolean  visited, isBlocked, path;
+    private Node parent;
+    private int row, col, fVal, gVal, hVal;
+    private boolean blocked, path;
 
 
-    public Node(int row, int col, int hVal, boolean isBlocked){
+    public Node(int row, int col, int hVal, boolean blocked){
         this.parent = null;
         this.row = row; 
         this.col = col;
         this.hVal = hVal;
         this.fVal = 0;
         this.gVal = 0;
-        this.isBlocked = isBlocked;
-        this.visited = false;
+        this.blocked = blocked;
         this.path = false;
     }
 
@@ -29,7 +28,8 @@ public class Node{
     // Get f, g, h values 
 
     public int getFVal(){
-        return this.gVal + this.hVal;
+        fVal = this.gVal + this.hVal;
+        return fVal;
     }
 
     public int getGVal(){
@@ -47,25 +47,31 @@ public class Node{
         this.fVal = this.gVal + this.hVal;
     }
 
-    // Check visited
-
-    public void visit(){
-        this.visited = true;
+    public boolean isBlocked() {
+        return blocked;
+    }
+    public void setBlocked(boolean blocked){
+        this.blocked = blocked;
     }
 
-    public boolean isVisited(){
-        return this.visited;
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setPath(boolean inPath) {
+        path = inPath;
+    }
+
+    public boolean onPath() {
+        return path;
     }
 
     public boolean equals(Node other) {
         return (this.col == other.col) && (this.row == other.row); 
-    }
-
-    public int compareTo(Node other){
-        if (this.fVal == other.fVal) {
-            return this.gVal - other.gVal;
-        }
-        return this.fVal - other.fVal;
     }
 
 }

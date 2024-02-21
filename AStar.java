@@ -6,90 +6,133 @@ public class AStar {
     MinHeap openList;
     ArrayList<Node> closedList;
     Stack<Node> foundPath;
-    boolean isFound;
     Node currentNode;
-    int numExpansions;
-    Grid grid;
+    int numExpansions, tie;
+    Grid gridWorld, agentWorld;
 
 
     public AStar(Grid grid, int tie) {
-        this.grid = grid;
-        openList = new MinHeap(grid.SIZE * grid.SIZE, tie);
+        gridWorld = grid;
+        agentWorld = new Grid(gridWorld.agent.getRow(), gridWorld.agent.getCol(), gridWorld.goal.getRow(), gridWorld.goal.getCol(), true);
+        checkAdjacency();
+        openList = new MinHeap(25, tie);
         closedList = new ArrayList<Node>();
         foundPath = new Stack<>();
-        currentNode = grid.start;
-        isFound = false;
+        currentNode = agentWorld.agent;
         numExpansions = 0;
-        
-        while (!currentNode.equals(grid.goal)) {
+        this.tie = tie;
+    }
+
+    public boolean search() {
+        while (!currentNode.equals(agentWorld.goal)) {
             closedList.add(currentNode);
             findNextStep(currentNode);
             if (openList.getHeapSize() == 0) {
-                break;
+                return false;
             }
             currentNode = openList.extractMin();
             numExpansions++;
         }
 
-        while (!currentNode.getParent().equals(currentNode)) {
+        while (!currentNode.equals(agentWorld.agent)) { //backtrack from goal to agent
             foundPath.push(currentNode);
-            currentNode.path = true;
+            currentNode.setPath(true);
             currentNode = currentNode.getParent();    
         }
+
+
+        while (!foundPath.isEmpty()) {
+            Node nextNode = foundPath.pop();
+            if (agentWorld.grid[nextNode.getRow()][nextNode.getCol()].isBlocked()) {
+                agentWorld.clearPaths();
+                nextNode.setBlocked(true);
+                closedList.clear();
+                foundPath.clear();
+                openList.clearHeap();
+                currentNode = agentWorld.agent;
+                System.out.println("\nGenerating New Path!");
+                search();
+            } else {
+                agentWorld.agent = nextNode;
+                checkAdjacency();
+                System.out.println();
+                agentWorld.printGrid();
+            }
+        }
+        return true;
 
     }
 
     public void findNextStep(Node node){
         if (checkDown(node)) {
-            Node neighbor = grid.grid[node.row+1][node.col];
+            Node neighbor = agentWorld.grid[node.getRow()+1][node.getCol()];
             if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
-                neighbor.setGVal(node.gVal + 1);
+                neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
         }
         if (checkUp(node)) {
-            Node neighbor = grid.grid[node.row-1][node.col];
+            Node neighbor = agentWorld.grid[node.getRow()-1][node.getCol()];
             if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
-                neighbor.setGVal(node.gVal + 1);
+                neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
         }
 
         if (checkRight(node)) {
-            Node neighbor = grid.grid[node.row][node.col+1];
+            Node neighbor = agentWorld.grid[node.getRow()][node.getCol()+1];
             if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
-                neighbor.setGVal(node.gVal + 1);
+                neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
         }
 
         if (checkLeft(node)) {
-            Node neighbor = grid.grid[node.row][node.col-1];
+            Node neighbor = agentWorld.grid[node.getRow()][node.getCol()-1];
             if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
-                neighbor.setGVal(node.gVal + 1);
+                neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
         }
     }
 
-    //Returns true if node is available and unblocked, otherwise false
-    public boolean checkDown(Node node) {
-        return node.row+1 < grid.SIZE && !grid.grid[node.row+1][node.col].isBlocked;
+    //Adds obstacles around current agent position
+    public void checkAdjacency() {
+        if (agentWorld.agent.getRow()+1 < agentWorld.SIZE) {
+            boolean gridBlocked = gridWorld.grid[agentWorld.agent.getRow()+1][agentWorld.agent.getCol()].isBlocked();
+            agentWorld.grid[agentWorld.agent.getRow()+1][agentWorld.agent.getCol()].setBlocked(gridBlocked);
+        } 
+        if (agentWorld.agent.getRow()-1 >= 0) {
+            boolean gridBlocked = gridWorld.grid[agentWorld.agent.getRow()-1][agentWorld.agent.getCol()].isBlocked();
+            agentWorld.grid[agentWorld.agent.getRow()-1][agentWorld.agent.getCol()].setBlocked(gridBlocked);
+        }
+        if (agentWorld.agent.getCol()+1 < agentWorld.SIZE) {
+            boolean gridBlocked = gridWorld.grid[agentWorld.agent.getRow()][agentWorld.agent.getCol()+1].isBlocked();
+            agentWorld.grid[agentWorld.agent.getRow()][agentWorld.agent.getCol()+1].setBlocked(gridBlocked);
+        }
+        if (agentWorld.agent.getCol()-1 >= 0) {
+            boolean gridBlocked = gridWorld.grid[agentWorld.agent.getRow()][agentWorld.agent.getCol()-1].isBlocked();
+            agentWorld.grid[agentWorld.agent.getRow()][agentWorld.agent.getCol()-1].setBlocked(gridBlocked);
+        }
     }
 
-        //Returns true if node is available and unblocked, otherwise false
+    //Returns true if node is available and unblocked, otherwise false
+    public boolean checkDown(Node node) {
+        return node.getRow()+1 < agentWorld.SIZE && !agentWorld.grid[node.getRow()+1][node.getCol()].isBlocked();
+    }
+
+    //Returns true if node is available and unblocked, otherwise false
     public boolean checkUp(Node node) {
-        return node.row-1 >= 0 && !grid.grid[node.row-1][node.col].isBlocked;
+        return node.getRow()-1 >= 0 && !agentWorld.grid[node.getRow()-1][node.getCol()].isBlocked();
     }
 
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkRight(Node node) {
-        return node.col+1 < grid.SIZE && !grid.grid[node.row][node.col+1].isBlocked;
+        return node.getCol()+1 < agentWorld.SIZE && !agentWorld.grid[node.getRow()][node.getCol()+1].isBlocked();
     }
-
         //Returns true if node is available and unblocked, otherwise false
     public boolean checkLeft(Node node) {
-        return node.col-1 >= 0 && !grid.grid[node.row][node.col-1].isBlocked;
+        return node.getCol()-1 >= 0 && !agentWorld.grid[node.getRow()][node.getCol()-1].isBlocked();
     }
 
     public void openListAdd(Node node) {
@@ -100,5 +143,9 @@ public class AStar {
             node.setParent(currentNode);
             openList.insertKey(node);
         }
+    }
+
+    public void printAgentGrid() {
+        agentWorld.printGrid();
     }
 }
