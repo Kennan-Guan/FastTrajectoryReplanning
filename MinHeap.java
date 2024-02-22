@@ -43,20 +43,34 @@
         current_heap_size++;
         
            
-        while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal()) { 
-            swap(heapArray, i, parent(i)); 
-            i = parent(i); 
-        } 
+        if (tie == 0) {
+            while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal() || (heapArray[i].getFVal() == heapArray[parent(i)].getFVal() && (heapArray[i].getGVal() < heapArray[parent(i)].getGVal()))) { 
+                swap(heapArray, i, parent(i)); 
+                i = parent(i); 
+            } 
+        } else {
+            while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal() || (heapArray[i].getFVal() == heapArray[parent(i)].getFVal() && (heapArray[i].getGVal() > heapArray[parent(i)].getGVal()))) { 
+                swap(heapArray, i, parent(i)); 
+                i = parent(i); 
+            } 
+        }
         return true; 
     } 
       
     public void decreaseKey(int key, Node new_val) { 
         heapArray[key] = new_val; 
-  
-        while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal()) { 
-            swap(heapArray, key, parent(key)); 
-            key = parent(key); 
-        } 
+
+        if (tie == 0) {
+            while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal() || (heapArray[key].getFVal() == heapArray[parent(key)].getFVal() && (heapArray[key].getGVal() < heapArray[parent(key)].getGVal()))) { 
+                swap(heapArray, key, parent(key)); 
+                key = parent(key); 
+            } 
+        } else {
+            while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal() || (heapArray[key].getFVal() == heapArray[parent(key)].getFVal() && (heapArray[key].getGVal() > heapArray[parent(key)].getGVal()))) { 
+                swap(heapArray, key, parent(key)); 
+                key = parent(key); 
+            } 
+        }
     } 
       
     public Node getMin() { 
@@ -108,7 +122,7 @@
                     smallest = l;
             }
         }
-        if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal() && heapArray[r].getGVal() < heapArray[smallest].getGVal()) {
+        if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal()) {
             if(tie == 0) {
                 if (heapArray[r].getGVal() < heapArray[smallest].getGVal())
                     smallest = r;
@@ -126,12 +140,21 @@
     } 
 
     public boolean changeValueOnAKey(int key, Node new_val) { 
-        if (heapArray[key].getFVal() <= new_val.getFVal()) { 
-            return false; 
-        } else { 
-            decreaseKey(key, new_val); 
-            return true;
+        if (heapArray[key].getFVal() < new_val.getFVal()) { 
+            return false;
         } 
+        
+        if ((heapArray[key].getFVal() == new_val.getFVal())) {
+            if(tie == 0) {
+                if (heapArray[key].getGVal() < new_val.getGVal())
+                    return false;
+            } else {
+                if (heapArray[key].getGVal() > new_val.getGVal())
+                    return false;
+            }
+        }
+        decreaseKey(key, new_val); 
+        return true; 
     } 
 
     public int findIndex(Node node) {

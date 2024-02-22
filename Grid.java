@@ -2,7 +2,7 @@ public class Grid{
     Node[][] grid;
     Node agent, goal;
     
-    public final int SIZE = 5;
+    public final int SIZE = 20;
     public final double OBSTACLE_PERCENTAGE = 0.20;
 
     //Creates an 50 x 50 empty grid of nodes with starting node at (start_row, start_col)
@@ -43,12 +43,11 @@ public class Grid{
             for (int j = 0; j < SIZE; j++) {
                 if (grid[i][j] != agent) {
                     grid[i][j].setPath(false);
-                    grid[i][j].setParent(null);
-                    grid[i][j].setGVal(0);
                 }
-
+                grid[i][j].setParent(null);
+                grid[i][j].setGVal(0);
             }
-        }
+        }        
         agent.setParent(agent);
     }
 

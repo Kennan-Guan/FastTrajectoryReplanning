@@ -15,7 +15,7 @@ public class AStar {
         gridWorld = grid;
         agentWorld = new Grid(gridWorld.agent.getRow(), gridWorld.agent.getCol(), gridWorld.goal.getRow(), gridWorld.goal.getCol(), true);
         checkAdjacency();
-        openList = new MinHeap(25, tie);
+        openList = new MinHeap(agentWorld.SIZE * agentWorld.SIZE, tie);
         closedList = new ArrayList<Node>();
         foundPath = new Stack<>();
         currentNode = agentWorld.agent;
@@ -40,7 +40,8 @@ public class AStar {
             currentNode = currentNode.getParent();    
         }
 
-
+        System.out.println();
+        agentWorld.printGrid();
         while (!foundPath.isEmpty()) {
             Node nextNode = foundPath.pop();
             if (agentWorld.grid[nextNode.getRow()][nextNode.getCol()].isBlocked()) {
@@ -55,9 +56,8 @@ public class AStar {
             } else {
                 agentWorld.agent = nextNode;
                 checkAdjacency();
-                
-                System.out.println();
-                agentWorld.printGrid();
+            
+            
             }
         }
         return agentWorld.agent.equals(agentWorld.goal);
@@ -67,14 +67,14 @@ public class AStar {
     public void findNextStep(Node node){
         if (checkDown(node)) {
             Node neighbor = agentWorld.grid[node.getRow()+1][node.getCol()];
-            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
+            if(!closedList.contains(neighbor)) {
                 neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
         }
         if (checkUp(node)) {
             Node neighbor = agentWorld.grid[node.getRow()-1][node.getCol()];
-            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
+            if(!closedList.contains(neighbor)) {
                 neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
@@ -82,7 +82,7 @@ public class AStar {
 
         if (checkRight(node)) {
             Node neighbor = agentWorld.grid[node.getRow()][node.getCol()+1];
-            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
+            if(!closedList.contains(neighbor)) {
                 neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
@@ -90,7 +90,7 @@ public class AStar {
 
         if (checkLeft(node)) {
             Node neighbor = agentWorld.grid[node.getRow()][node.getCol()-1];
-            if(!closedList.contains(neighbor) && openList.findIndex(neighbor) == -1) {
+            if(!closedList.contains(neighbor)) {
                 neighbor.setGVal(node.getGVal() + 1);
                 openListAdd(neighbor);
             }
@@ -138,10 +138,10 @@ public class AStar {
 
     public void openListAdd(Node node) {
         int existing_node = openList.findIndex(node);
+        node.setParent(currentNode);
         if (existing_node > -1) {
             openList.changeValueOnAKey(existing_node, node);
         } else {
-            node.setParent(currentNode);
             openList.insertKey(node);
         }
     }
