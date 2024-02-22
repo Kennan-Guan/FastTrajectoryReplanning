@@ -3,7 +3,7 @@ public class Grid{
     Node agent, goal;
     
     public final int SIZE = 5;
-    public final double OBSTACLE_PERCENTAGE = 0.30;
+    public final double OBSTACLE_PERCENTAGE = 0.20;
 
     //Creates an 50 x 50 empty grid of nodes with starting node at (start_row, start_col)
     //and goal node at (goal_row, goal_col) with indices starting at 0

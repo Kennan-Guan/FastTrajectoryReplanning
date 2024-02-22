@@ -55,11 +55,12 @@ public class AStar {
             } else {
                 agentWorld.agent = nextNode;
                 checkAdjacency();
+                
                 System.out.println();
                 agentWorld.printGrid();
             }
         }
-        return true;
+        return agentWorld.agent.equals(agentWorld.goal);
 
     }
 
