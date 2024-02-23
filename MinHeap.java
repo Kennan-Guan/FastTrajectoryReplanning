@@ -2,9 +2,9 @@
     public Node[] heapArray; 
     private int capacity; 
     private int current_heap_size;
-    private int tie;
+    private boolean tie;
     
-    public MinHeap(int n, int tie) { 
+    public MinHeap(int n, boolean tie) { 
         capacity = n; 
         this.tie = tie;
         heapArray = new Node[capacity]; 
@@ -43,7 +43,7 @@
         current_heap_size++;
         
            
-        if (tie == 0) {
+        if (tie) {
             while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal() || (heapArray[i].getFVal() == heapArray[parent(i)].getFVal() && (heapArray[i].getGVal() < heapArray[parent(i)].getGVal()))) { 
                 swap(heapArray, i, parent(i)); 
                 i = parent(i); 
@@ -60,7 +60,7 @@
     public void decreaseKey(int key, Node new_val) { 
         heapArray[key] = new_val; 
 
-        if (tie == 0) {
+        if (tie) {
             while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal() || (heapArray[key].getFVal() == heapArray[parent(key)].getFVal() && (heapArray[key].getGVal() < heapArray[parent(key)].getGVal()))) { 
                 swap(heapArray, key, parent(key)); 
                 key = parent(key); 
@@ -114,7 +114,7 @@
             smallest = r;
         } 
         if (l < current_heap_size && heapArray[l].getFVal() == heapArray[smallest].getFVal()) {
-            if(tie == 0) {
+            if(tie) {
                 if (heapArray[l].getGVal() < heapArray[smallest].getGVal())
                     smallest = l;
             } else {
@@ -123,7 +123,7 @@
             }
         }
         if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal()) {
-            if(tie == 0) {
+            if(tie) {
                 if (heapArray[r].getGVal() < heapArray[smallest].getGVal())
                     smallest = r;
             } else {
@@ -145,7 +145,7 @@
         } 
         
         if ((heapArray[key].getFVal() == new_val.getFVal())) {
-            if(tie == 0) {
+            if(tie) {
                 if (heapArray[key].getGVal() < new_val.getGVal())
                     return false;
             } else {

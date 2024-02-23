@@ -19,7 +19,6 @@ public class Grid{
                     grid[i][j] = agent;
                 } else if (i  == goal_row && j == goal_col) {
                     goal = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
-                    goal.setGVal(Integer.MAX_VALUE);
                     grid[i][j] = goal;
                 } else {
                     if (empty) {

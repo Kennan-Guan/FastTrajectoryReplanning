@@ -1,29 +1,41 @@
 import java.util.ArrayList;
 import java.util.Stack;
 
-//Implements Repeated Forward A* with ties being broken in favor of smaller g-values
+//Implements A* and its variations
 public class AStar {
     MinHeap openList;
     ArrayList<Node> closedList;
     Stack<Node> foundPath;
     Node currentNode;
-    int numExpansions, tie;
+    int numExpansions;
+    boolean adaptive, tie, direction;
     Grid gridWorld, agentWorld;
 
 
-    public AStar(Grid grid, int tie) {
+    public AStar(Grid grid, boolean tie, boolean adaptive, boolean direction) {
         gridWorld = grid;
         agentWorld = new Grid(gridWorld.agent.getRow(), gridWorld.agent.getCol(), gridWorld.goal.getRow(), gridWorld.goal.getCol(), true);
         checkAdjacency();
         openList = new MinHeap(agentWorld.SIZE * agentWorld.SIZE, tie);
         closedList = new ArrayList<Node>();
         foundPath = new Stack<>();
-        currentNode = agentWorld.agent;
+        if (direction) {
+            currentNode = agentWorld.goal;
+        } else {
+            currentNode = agentWorld.agent;
+        }
         numExpansions = 0;
-        this.tie = tie;
+        this.tie = tie; // false --> favor larger g-values   true --> favor smaller g-values
+        this.adaptive = adaptive; // whether the A* is adaptive
+        this.direction = direction; // false --> forward  true --> backward
     }
 
     public boolean search() {
+        if (direction) { //if search is backward, swap agent and goal
+            Node temp = agentWorld.goal;
+            agentWorld.goal = agentWorld.agent;
+            agentWorld.agent = temp;
+        }
         while (!currentNode.equals(agentWorld.goal)) {
             closedList.add(currentNode);
             findNextStep(currentNode);
@@ -40,18 +52,38 @@ public class AStar {
             currentNode = currentNode.getParent();    
         }
 
+        if (direction) { //if search is backward, swap back to original state
+            Node temp = agentWorld.goal;
+            agentWorld.goal = agentWorld.agent;
+            agentWorld.agent = temp;
+
+            Stack<Node> temp_stack = new Stack<>();
+            temp_stack.push(agentWorld.goal);
+            while (!foundPath.isEmpty()) { 
+                temp_stack.push(foundPath.pop());
+            }
+            foundPath = temp_stack;
+        }
+
         System.out.println();
-        // agentWorld.printGrid();
+        agentWorld.printGrid();
         while (!foundPath.isEmpty()) {
             Node nextNode = foundPath.pop();
             if (agentWorld.grid[nextNode.getRow()][nextNode.getCol()].isBlocked()) {
+                if (adaptive) {
+                    updateHValues();
+                }
                 agentWorld.clearPaths();
                 nextNode.setBlocked(true);
                 closedList.clear();
                 foundPath.clear();
                 openList.clearHeap();
-                currentNode = agentWorld.agent;
-                //System.out.println("\nGenerating New Path!");
+                if (direction) {
+                    currentNode = agentWorld.goal;
+                } else {
+                    currentNode = agentWorld.agent;
+                }
+                System.out.println("\nGenerating New Path!");
                 search();
             } else {
                 agentWorld.agent = nextNode;
@@ -143,6 +175,15 @@ public class AStar {
             openList.changeValueOnAKey(existing_node, node);
         } else {
             openList.insertKey(node);
+        }
+    }
+
+    // updates H values based on discovered G values of nodes
+    public void updateHValues(){
+        for (Node node : closedList){
+            if(node.getHVal() < agentWorld.goal.getGVal() - node.getGVal()){
+                agentWorld.grid[node.getRow()][node.getCol()].setHVal(agentWorld.goal.getGVal() - node.getGVal());
+            }
         }
     }
 
