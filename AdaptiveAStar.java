@@ -1,26 +1,25 @@
 import java.util.ArrayList;
 import java.util.Stack;
 
-//Implements Repeated Forward A* with ties being broken in favor of smaller g-values
-public class AStar {
+//Implements Adaptive A* with ties being broken in favor of larger g-values
+public class AdaptiveAStar {
     MinHeap openList;
     ArrayList<Node> closedList;
     Stack<Node> foundPath;
     Node currentNode;
-    int numExpansions, tie;
+    int numExpansions;
     Grid gridWorld, agentWorld;
 
 
-    public AStar(Grid grid, int tie) {
+    public AdaptiveAStar(Grid grid) {
         gridWorld = grid;
         agentWorld = new Grid(gridWorld.agent.getRow(), gridWorld.agent.getCol(), gridWorld.goal.getRow(), gridWorld.goal.getCol(), true);
         checkAdjacency();
-        openList = new MinHeap(agentWorld.SIZE * agentWorld.SIZE, tie);
+        openList = new MinHeap(agentWorld.SIZE * agentWorld.SIZE, 1);
         closedList = new ArrayList<Node>();
         foundPath = new Stack<>();
         currentNode = agentWorld.agent;
         numExpansions = 0;
-        this.tie = tie;
     }
 
     public boolean search() {
@@ -45,13 +44,14 @@ public class AStar {
         while (!foundPath.isEmpty()) {
             Node nextNode = foundPath.pop();
             if (agentWorld.grid[nextNode.getRow()][nextNode.getCol()].isBlocked()) {
+                updateHValues();
                 agentWorld.clearPaths();
                 nextNode.setBlocked(true);
                 closedList.clear();
                 foundPath.clear();
                 openList.clearHeap();
                 currentNode = agentWorld.agent;
-                //System.out.println("\nGenerating New Path!");
+                //System.out.println("\nGenerating New Path with updated h values!");
                 search();
             } else {
                 agentWorld.agent = nextNode;
@@ -145,8 +145,17 @@ public class AStar {
             openList.insertKey(node);
         }
     }
+    // updates H values based on discovered G values of nodes
+    public void updateHValues(){
+        for (Node node : closedList){
+            if(node.getHVal() < agentWorld.goal.getGVal() - node.getGVal()){
+                agentWorld.grid[node.getRow()][node.getCol()].setHVal(agentWorld.goal.getGVal() - node.getGVal());
+            }
+        }
+    }
 
     public void printAgentGrid() {
         agentWorld.printGrid();
     }
 }
+

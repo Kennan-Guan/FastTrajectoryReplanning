@@ -47,6 +47,11 @@ public class Node{
         this.fVal = this.gVal + this.hVal;
     }
 
+    public void setHVal(int newHVal){
+        this.hVal = newHVal;
+        this.fVal = this.gVal + this.hVal;
+    }
+
     public boolean isBlocked() {
         return blocked;
     }
