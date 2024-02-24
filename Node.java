@@ -1,3 +1,6 @@
+/* Defines each cell the agent traverses in the grid 
+ * @author David Nguyen, Kennan Guan
+*/
 public class Node{
     private Node parent;
     private int row, col, fVal, gVal, hVal;

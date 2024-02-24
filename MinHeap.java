@@ -1,56 +1,60 @@
+ /* Min binary heap to store values of the open list in order 
+  * @author Kennan Guan, David Nguyen
+ */
+
  public class MinHeap { 
-    public Node[] heapArray; 
-    private int capacity; 
-    private int current_heap_size;
-    private boolean tie;
+    Node[] heapArray; 
+    int capacity; 
+    int size;
+    boolean tie;
     
     public MinHeap(int n, boolean tie) { 
         capacity = n; 
         this.tie = tie;
         heapArray = new Node[capacity]; 
-        current_heap_size = 0; 
+        size = 0; 
     } 
        
-    private void swap(Node[] arr, int a, int b) { 
-        Node temp = arr[a]; 
-        arr[a] = arr[b]; 
-        arr[b] = temp; 
+    public void swap(int a, int b) { 
+        Node temp = heapArray[a]; 
+        heapArray[a] = heapArray[b]; 
+        heapArray[b] = temp; 
     } 
       
-    private int parent(int key) { 
+    public int parent(int key) { 
         return (key - 1) / 2; 
     } 
       
-    private int left(int key) { 
+    public int left(int key) { 
         return 2 * key + 1; 
     } 
       
-    private int right(int key) { 
+    public int right(int key) { 
         return 2 * key + 2; 
     } 
       
     public int getHeapSize() {
-        return current_heap_size;
+        return size;
     }
       
     public boolean insertKey(Node key) { 
-        if (current_heap_size == capacity) { 
+        if (size == capacity) { 
             return false; 
         } 
        
-        int i = current_heap_size; 
+        int i = size; 
         heapArray[i] = key; 
-        current_heap_size++;
+        size++;
         
            
         if (tie) {
             while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal() || (heapArray[i].getFVal() == heapArray[parent(i)].getFVal() && (heapArray[i].getGVal() < heapArray[parent(i)].getGVal()))) { 
-                swap(heapArray, i, parent(i)); 
+                swap(i, parent(i)); 
                 i = parent(i); 
             } 
         } else {
             while (i != 0 && heapArray[i].getFVal() < heapArray[parent(i)].getFVal() || (heapArray[i].getFVal() == heapArray[parent(i)].getFVal() && (heapArray[i].getGVal() > heapArray[parent(i)].getGVal()))) { 
-                swap(heapArray, i, parent(i)); 
+                swap(i, parent(i)); 
                 i = parent(i); 
             } 
         }
@@ -62,35 +66,31 @@
 
         if (tie) {
             while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal() || (heapArray[key].getFVal() == heapArray[parent(key)].getFVal() && (heapArray[key].getGVal() < heapArray[parent(key)].getGVal()))) { 
-                swap(heapArray, key, parent(key)); 
+                swap(key, parent(key)); 
                 key = parent(key); 
             } 
         } else {
             while (key != 0 && heapArray[key].getFVal() < heapArray[parent(key)].getFVal() || (heapArray[key].getFVal() == heapArray[parent(key)].getFVal() && (heapArray[key].getGVal() > heapArray[parent(key)].getGVal()))) { 
-                swap(heapArray, key, parent(key)); 
+                swap(key, parent(key)); 
                 key = parent(key); 
             } 
         }
     } 
       
-    public Node getMin() { 
-        return heapArray[0]; 
-    } 
-      
     public Node extractMin() { 
-        if (current_heap_size <= 0) { 
+        if (size <= 0) { 
             return null; 
         } 
   
-        if (current_heap_size == 1) { 
-            current_heap_size--; 
+        if (size == 1) { 
+            size--; 
             return heapArray[0]; 
         } 
           
         Node root = heapArray[0]; 
   
-        heapArray[0] = heapArray[current_heap_size - 1]; 
-        current_heap_size--; 
+        heapArray[0] = heapArray[size-1]; 
+        size--; 
         MinHeapify(0); 
   
         return root; 
@@ -102,39 +102,40 @@
         extractMin(); 
     } 
 
+    //Orders the heap on the current key to a minimum heap
     private void MinHeapify(int key) { 
-        int l = left(key); 
-        int r = right(key); 
+        int left = left(key); 
+        int right = right(key); 
   
         int smallest = key; 
-        if (l < current_heap_size && heapArray[l].getFVal() < heapArray[smallest].getFVal()) { 
-            smallest = l; 
+        if (left < size && heapArray[left].getFVal() < heapArray[smallest].getFVal()) { 
+            smallest = left; 
         } 
-        if (r < current_heap_size && heapArray[r].getFVal() < heapArray[smallest].getFVal()) { 
-            smallest = r;
+        if (right < size && heapArray[right].getFVal() < heapArray[smallest].getFVal()) { 
+            smallest = right;
         } 
-        if (l < current_heap_size && heapArray[l].getFVal() == heapArray[smallest].getFVal()) {
+        if (left < size && heapArray[left].getFVal() == heapArray[smallest].getFVal()) {
             if(tie) {
-                if (heapArray[l].getGVal() < heapArray[smallest].getGVal())
-                    smallest = l;
+                if (heapArray[left].getGVal() < heapArray[smallest].getGVal())
+                    smallest = left;
             } else {
-                if (heapArray[l].getGVal() > heapArray[smallest].getGVal())
-                    smallest = l;
+                if (heapArray[left].getGVal() > heapArray[smallest].getGVal())
+                    smallest = left;
             }
         }
-        if (r < current_heap_size && heapArray[r].getFVal() == heapArray[smallest].getFVal()) {
+        if (right < size && heapArray[right].getFVal() == heapArray[smallest].getFVal()) {
             if(tie) {
-                if (heapArray[r].getGVal() < heapArray[smallest].getGVal())
-                    smallest = r;
+                if (heapArray[right].getGVal() < heapArray[smallest].getGVal())
+                    smallest = right;
             } else {
-                if (heapArray[r].getGVal() > heapArray[smallest].getGVal())
-                    smallest = r;
+                if (heapArray[right].getGVal() > heapArray[smallest].getGVal())
+                    smallest = right;
             }
     }
         
   
         if (smallest != key) { 
-            swap(heapArray, key, smallest); 
+            swap(key, smallest); 
             MinHeapify(smallest); 
         } 
     } 
@@ -168,7 +169,7 @@
 
     public void clearHeap() {
         heapArray = new Node[capacity];
-        current_heap_size = 0;
+        size = 0;
     }
 } 
   

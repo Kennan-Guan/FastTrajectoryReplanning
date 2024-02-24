@@ -1,3 +1,6 @@
+/* Generates a maze and defines obstacles
+ * @author Kennan Guan, David Nguyen
+*/
 public class Grid{
     Node[][] grid;
     Node agent, goal;

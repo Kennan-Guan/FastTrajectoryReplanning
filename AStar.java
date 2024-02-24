@@ -1,3 +1,6 @@
+/* 
+ * @author Kennan Guan, David Nguyen
+ */
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -65,8 +68,10 @@ public class AStar {
             foundPath = temp_stack;
         }
 
+        //Print out proposed path
         System.out.println();
         agentWorld.printGrid();
+
         while (!foundPath.isEmpty()) {
             Node nextNode = foundPath.pop();
             if (agentWorld.grid[nextNode.getRow()][nextNode.getCol()].isBlocked()) {
