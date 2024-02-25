@@ -1,4 +1,5 @@
- /* Min binary heap to store values of the open list in order 
+ /* Min binary heap to store values of the open list in order, referenced implementation developed by https://www.geeksforgeeks.org/binary-heap/ and 
+  * changed to fit needs of assignment.
   * @author Kennan Guan, David Nguyen
  */
 
