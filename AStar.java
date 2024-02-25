@@ -24,6 +24,7 @@ public class AStar {
         foundPath = new Stack<>();
         if (direction) {
             currentNode = agentWorld.goal;
+            agentWorld.setBackwardHVal();
         } else {
             currentNode = agentWorld.agent;
         }

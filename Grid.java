@@ -21,7 +21,7 @@ public class Grid{
                     agent.setParent(agent);
                     grid[i][j] = agent;
                 } else if (i  == goal_row && j == goal_col) {
-                    goal = new Node(i, j, Math.abs(goal_row - i) + Math.abs(goal_col - j), false);
+                    goal = new Node(i, j, 0, false);
                     grid[i][j] = goal;
                 } else {
                     if (empty) {
@@ -38,6 +38,15 @@ public class Grid{
     //Randomly determines if an obstacle should be present or not
     public boolean setObstacle() {
         return Math.random() < OBSTACLE_PERCENTAGE;
+    }
+
+    //Used to change the h-values during backward A*
+    public void setBackwardHVal() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                grid[i][j].setHVal(Math.abs(agent.getRow() - i) + Math.abs(agent.getCol() - j));
+            }
+        }
     }
 
     public void clearPaths() {
